@@ -19,15 +19,20 @@
         <form id="address-form" class="address-form" target="orbit-site" novalidate>
           <span class="lock" aria-hidden="true">&#9675;</span>
           <input id="address" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="Search or enter a web address" aria-label="Web address" />
-          <button type="submit">Open</button>
+          <button type="submit">Open directly</button>
         </form>
-        <button id="preview" class="preview" title="Show this site inside Orbit when allowed" aria-label="Preview current address">Preview</button>
-        <button id="open-external" class="external" title="Open preview in a new tab" aria-label="Open current page in new tab">&#8599;</button>
+        <button id="preview" class="preview" title="Try to show this site inside Orbit" aria-label="Preview current address">Preview here</button>
+        <button id="open-external" class="external" title="Open current page directly in a new tab" aria-label="Open current page in new tab">&#8599;</button>
       </header>
 
       <section id="viewer" class="viewer">
         <div id="load-status" class="load-status" role="status">Loading...</div>
-        <div id="new-tab" class="new-tab"><span>O</span><p>New tab</p><small>Enter an address and press Open. It will load in a dedicated browser tab; Preview is for sites that permit embedding.</small></div>
+        <div id="new-tab" class="new-tab"><span>O</span><p>New tab</p><small>Open directly works with every public site. Preview here is available for sites that permit embedding.</small></div>
+        <div id="blocked-message" class="blocked-message" hidden role="status">
+          <strong>This site does not allow embedded previews.</strong>
+          <span>Open it directly in a browser tab to use the complete site.</span>
+          <button id="open-blocked" type="button">Open directly</button>
+        </div>
         <iframe id="page" title="Web page viewer" referrerpolicy="strict-origin-when-cross-origin"></iframe>
       </section>
     </main>

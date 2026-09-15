@@ -10,6 +10,9 @@
   const reload = document.querySelector('#reload');
   const external = document.querySelector('#open-external');
   const preview = document.querySelector('#preview');
+  const blockedMessage = document.querySelector('#blocked-message');
+  const openBlocked = document.querySelector('#open-blocked');
+  let loadTimer;
   let entries;
   try { entries = JSON.parse(sessionStorage.getItem('orbit-history') || '[]'); }
   catch { entries = []; }
@@ -31,12 +34,22 @@
     if (addHistory) { entries = entries.slice(0, cursor + 1); entries.push(url); cursor = entries.length - 1; save(); }
     address.value = url;
     newTab.hidden = true; viewer.hidden = false;
+    blockedMessage.hidden = true;
     status.classList.add('show');
+    window.clearTimeout(loadTimer);
+    loadTimer = window.setTimeout(() => {
+      status.classList.remove('show');
+      blockedMessage.hidden = false;
+    }, 7000);
     frame.src = url;
     updateControls();
   }
-  // Let the browser perform a real navigation in a named tab. This works for sites
-  // that refuse iframe embedding and is more reliable than a scripted popup.
+
+  function openDirectly(url) {
+    if (url) window.open(url, 'orbit-site', 'noopener,noreferrer');
+  }
+
+  // Native navigation is the only browser-supported way to use sites that block iframes.
   form.addEventListener('submit', event => {
     const url = normalise(address.value);
     if (!url) { event.preventDefault(); return; }
@@ -44,11 +57,15 @@
     address.value = url;
   });
   preview.addEventListener('click', () => show(normalise(address.value)));
-  frame.addEventListener('load', () => status.classList.remove('show'));
+  frame.addEventListener('load', () => {
+    window.clearTimeout(loadTimer);
+    status.classList.remove('show');
+  });
   back.addEventListener('click', () => { if (cursor > 0) { cursor--; save(); show(entries[cursor], false); } });
   forward.addEventListener('click', () => { if (cursor < entries.length - 1) { cursor++; save(); show(entries[cursor], false); } });
   reload.addEventListener('click', () => { if (entries[cursor]) { status.classList.add('show'); frame.src = entries[cursor]; } });
-  external.addEventListener('click', () => { if (entries[cursor]) window.open(entries[cursor], '_blank', 'noopener,noreferrer'); });
+  external.addEventListener('click', () => openDirectly(entries[cursor]));
+  openBlocked.addEventListener('click', () => openDirectly(entries[cursor]));
   document.addEventListener('keydown', event => {
     if (event.altKey && event.key === 'ArrowLeft') { event.preventDefault(); back.click(); }
     if (event.altKey && event.key === 'ArrowRight') { event.preventDefault(); forward.click(); }
