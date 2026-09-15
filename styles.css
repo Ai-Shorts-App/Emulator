@@ -17,16 +17,13 @@ button:disabled { color: #6f7788; cursor: not-allowed; }
 input { min-width: 0; flex: 1; border: 0; outline: 0; color: #f3f5fa; background: transparent; font: inherit; font-size: 15px; }
 .address-form button { padding: 7px 14px; background: #e7b64e; color: #1b1608; font-weight: 700; }
 .address-form button:hover { background: #f7cf72; }
+.preview { height: 36px; padding: 0 12px; font-size: 13px; font-weight: 650; }
 .viewer { position: relative; flex: 1; min-height: 0; background: #fff; }
 iframe { width: 100%; height: 100%; border: 0; display: block; background: #fff; }
+.new-tab { position: absolute; inset: 0; display: grid; place-content: center; text-align: center; color: #8994a7; background: #10131d; }
+.new-tab span { margin: auto; width: 48px; height: 48px; display: grid; place-items: center; border-radius: 15px; color: #17130a; background: #e7b64e; font-weight: 900; font-size: 25px; }
+.new-tab p { margin: 15px 0 4px; color: #e9edf6; font-size: 18px; font-weight: 700; }
+.new-tab small { max-width: 360px; line-height: 1.5; }
 .load-status { position: absolute; z-index: 1; top: 11px; left: 50%; transform: translateX(-50%); padding: 6px 12px; border-radius: 99px; background: #151925e8; color: #cbd2e2; font-size: 13px; pointer-events: none; opacity: 0; transition: opacity .2s; }
 .load-status.show { opacity: 1; }
-.welcome { flex: 1; display: grid; place-items: center; padding: 24px; background: radial-gradient(circle at 50% 0%, #28314a 0, #10131d 46%, #090b11 100%); }
-.welcome-card { max-width: 590px; text-align: center; }
-.eyebrow { color: #e7b64e; font-size: 12px; font-weight: 750; letter-spacing: .16em; text-transform: uppercase; }
-h1 { margin: 8px 0; font-size: clamp(42px, 8vw, 76px); letter-spacing: -3px; }
-.welcome-card > p:not(.eyebrow) { color: #aeb8ca; line-height: 1.6; }
-.quick-links { display: flex; justify-content: center; gap: 10px; flex-wrap: wrap; margin: 28px 0; }
-.quick-links button { padding: 10px 15px; }
-.note { font-size: 13px; }
-@media (max-width: 620px) { .toolbar { gap: 6px; padding: 10px; } .brand { display: none; } .controls button { width: 31px; } .external { width: 32px; } .address-form { height: 39px; } .address-form button { padding: 6px 10px; } }
+@media (max-width: 620px) { .toolbar { gap: 6px; padding: 10px; } .brand, .preview { display: none; } .controls button { width: 31px; } .external { width: 32px; } .address-form { height: 39px; } .address-form button { padding: 6px 10px; } }

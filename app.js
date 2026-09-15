@@ -2,13 +2,14 @@
   const frame = document.querySelector('#page');
   const address = document.querySelector('#address');
   const form = document.querySelector('#address-form');
-  const welcome = document.querySelector('#welcome');
+  const newTab = document.querySelector('#new-tab');
   const viewer = document.querySelector('#viewer');
   const status = document.querySelector('#load-status');
   const back = document.querySelector('#back');
   const forward = document.querySelector('#forward');
   const reload = document.querySelector('#reload');
   const external = document.querySelector('#open-external');
+  const preview = document.querySelector('#preview');
   let entries;
   try { entries = JSON.parse(sessionStorage.getItem('orbit-history') || '[]'); }
   catch { entries = []; }
@@ -29,18 +30,19 @@
     if (!url) return;
     if (addHistory) { entries = entries.slice(0, cursor + 1); entries.push(url); cursor = entries.length - 1; save(); }
     address.value = url;
-    welcome.hidden = true; viewer.hidden = false;
+    newTab.hidden = true; viewer.hidden = false;
     status.classList.add('show');
     frame.src = url;
     updateControls();
   }
-  form.addEventListener('submit', event => { event.preventDefault(); show(normalise(address.value)); });
+  // Direct navigation is the default: unlike an iframe, it works with sites that block embedding.
+  form.addEventListener('submit', event => { event.preventDefault(); const url = normalise(address.value); if (url) window.location.assign(url); });
+  preview.addEventListener('click', () => show(normalise(address.value)));
   frame.addEventListener('load', () => status.classList.remove('show'));
   back.addEventListener('click', () => { if (cursor > 0) { cursor--; save(); show(entries[cursor], false); } });
   forward.addEventListener('click', () => { if (cursor < entries.length - 1) { cursor++; save(); show(entries[cursor], false); } });
   reload.addEventListener('click', () => { if (entries[cursor]) { status.classList.add('show'); frame.src = entries[cursor]; } });
   external.addEventListener('click', () => { if (entries[cursor]) window.open(entries[cursor], '_blank', 'noopener,noreferrer'); });
-  document.querySelectorAll('[data-url]').forEach(button => button.addEventListener('click', () => show(button.dataset.url)));
   document.addEventListener('keydown', event => {
     if (event.altKey && event.key === 'ArrowLeft') { event.preventDefault(); back.click(); }
     if (event.altKey && event.key === 'ArrowRight') { event.preventDefault(); forward.click(); }

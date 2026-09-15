@@ -10,36 +10,24 @@
   <body>
     <main class="browser-shell">
       <header class="toolbar">
-        <a class="brand" href="./" aria-label="Orbit Browser home"><span>◌</span> Orbit</a>
+        <a class="brand" href="./" aria-label="Orbit Browser home"><span>O</span> Orbit</a>
         <nav class="controls" aria-label="Browser controls">
-          <button id="back" title="Back (Alt + Left)" aria-label="Go back">←</button>
-          <button id="forward" title="Forward (Alt + Right)" aria-label="Go forward">→</button>
-          <button id="reload" title="Reload" aria-label="Reload page">↻</button>
+          <button id="back" title="Preview back (Alt + Left)" aria-label="Go back">&larr;</button>
+          <button id="forward" title="Preview forward (Alt + Right)" aria-label="Go forward">&rarr;</button>
+          <button id="reload" title="Reload preview" aria-label="Reload page">&#8635;</button>
         </nav>
         <form id="address-form" class="address-form">
-          <span class="lock" aria-hidden="true">⌁</span>
+          <span class="lock" aria-hidden="true">&#9675;</span>
           <input id="address" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="Search or enter a web address" aria-label="Web address" />
           <button type="submit">Go</button>
         </form>
-        <button id="open-external" class="external" title="Open in a new tab" aria-label="Open current page in new tab">↗</button>
+        <button id="preview" class="preview" title="Show this site inside Orbit when allowed" aria-label="Preview current address">Preview</button>
+        <button id="open-external" class="external" title="Open preview in a new tab" aria-label="Open current page in new tab">&#8599;</button>
       </header>
 
-      <section id="welcome" class="welcome" aria-live="polite">
-        <div class="welcome-card">
-          <p class="eyebrow">A lightweight web viewer</p>
-          <h1>Where to?</h1>
-          <p>Enter a URL above, or try one of these embed-friendly sites.</p>
-          <div class="quick-links">
-            <button data-url="https://example.com">Example</button>
-            <button data-url="https://www.wikipedia.org">Wikipedia</button>
-            <button data-url="https://developer.mozilla.org">MDN</button>
-          </div>
-          <p class="note">Some websites prevent being shown inside another page. When that happens, use ↗ to open the site directly in a new tab.</p>
-        </div>
-      </section>
-
-      <section id="viewer" class="viewer" hidden>
-        <div id="load-status" class="load-status" role="status">Loading…</div>
+      <section id="viewer" class="viewer">
+        <div id="load-status" class="load-status" role="status">Loading...</div>
+        <div id="new-tab" class="new-tab"><span>O</span><p>New tab</p><small>Enter an address above. Go opens every site directly; Preview is for embed-friendly sites.</small></div>
         <iframe id="page" title="Web page viewer" referrerpolicy="strict-origin-when-cross-origin"></iframe>
       </section>
     </main>
