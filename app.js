@@ -35,8 +35,14 @@
     frame.src = url;
     updateControls();
   }
-  // Direct navigation is the default: unlike an iframe, it works with sites that block embedding.
-  form.addEventListener('submit', event => { event.preventDefault(); const url = normalise(address.value); if (url) window.location.assign(url); });
+  // Let the browser perform a real navigation in a named tab. This works for sites
+  // that refuse iframe embedding and is more reliable than a scripted popup.
+  form.addEventListener('submit', event => {
+    const url = normalise(address.value);
+    if (!url) { event.preventDefault(); return; }
+    form.action = url;
+    address.value = url;
+  });
   preview.addEventListener('click', () => show(normalise(address.value)));
   frame.addEventListener('load', () => status.classList.remove('show'));
   back.addEventListener('click', () => { if (cursor > 0) { cursor--; save(); show(entries[cursor], false); } });
