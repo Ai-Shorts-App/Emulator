@@ -7,7 +7,7 @@ A static, GitHub Pages-ready web viewer with embedded preview and direct browser
 - **Open directly** opens a site in a real browser tab, so the destination's normal JavaScript, cookies, storage, navigation, and security policies work.
 - **Preview here** tries to render the site inside Orbit when the destination permits iframe embedding.
 - If the embedded frame stays blank, Orbit offers the direct browser fallback automatically.
-- When running locally with `npm start`, **Proxy preview** can display many sites that block iframes by fetching them through the local server.
+- When running locally with `npm start`, **Proxy preview** streams pages and media through the local server and rewrites HTML resource links.
 
 ## Important limitation
 
@@ -25,4 +25,4 @@ GitHub Pages cannot run a proxy. For local proxy preview, install Node.js 18 or 
 npm start
 ```
 
-Then open `http://127.0.0.1:4173`. The proxy binds to localhost, blocks private-network targets, limits redirects and response size, and is intended for personal development only. Some sites will still not work because they depend on login cookies, WebSockets, browser extensions, anti-bot checks, or tightly coupled APIs.
+Then open `http://127.0.0.1:4173`. The proxy binds to localhost, blocks private-network targets, limits redirects, forwards byte ranges for video, and is intended for personal development only. Some sites will still not work because they depend on login cookies, WebSockets, browser extensions, anti-bot checks, DRM, or tightly coupled APIs.

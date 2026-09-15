@@ -6,8 +6,9 @@ const path = require('node:path');
 
 const root = __dirname;
 const port = Number(process.env.PORT) || 4173;
-const maxResponseBytes = 15 * 1024 * 1024;
 const blockedHeaders = new Set(['content-security-policy', 'content-security-policy-report-only', 'x-frame-options', 'frame-options']);
+const forwardedRequestHeaders = ['accept', 'accept-language', 'cache-control', 'content-type', 'cookie', 'if-none-match', 'if-modified-since', 'if-range', 'range', 'referer', 'user-agent'];
+const hopByHopHeaders = new Set(['connection', 'keep-alive', 'proxy-authenticate', 'proxy-authorization', 'te', 'trailer', 'transfer-encoding', 'upgrade']);
 
 function isPrivateAddress(address) {
   if (net.isIPv4(address)) {
@@ -31,37 +32,64 @@ function targetFromRequest(requestUrl) {
   return new URL(value);
 }
 
-async function readResponse(response) {
-  const reader = response.body.getReader();
-  const chunks = [];
-  let total = 0;
-  while (true) {
-    const { done, value } = await reader.read();
-    if (done) break;
-    total += value.byteLength;
-    if (total > maxResponseBytes) throw new Error('The response is too large.');
-    chunks.push(Buffer.from(value));
-  }
-  return Buffer.concat(chunks);
+function proxyUrl(url) {
+  return `/proxy?url=${encodeURIComponent(url.href)}`;
+}
+
+function rewriteHtml(body, target) {
+  const html = body.toString('utf8');
+  return html.replace(/(\b(?:src|href|action|poster|formaction)\s*=\s*["'])([^"']+)(["'])/gi, (match, prefix, value, suffix) => {
+    if (/^(?:data:|blob:|javascript:|mailto:|tel:|#)/i.test(value)) return match;
+    try { return `${prefix}${proxyUrl(new URL(value, target))}${suffix}`; }
+    catch { return match; }
+  }).replace(/(\bsrcset\s*=\s*["'])([^"']+)(["'])/gi, (match, prefix, value, suffix) => {
+    const rewritten = value.split(',').map(candidate => {
+      const parts = candidate.trim().split(/\s+/);
+      try { parts[0] = proxyUrl(new URL(parts[0], target)); } catch { /* keep invalid candidate */ }
+      return parts.join(' ');
+    }).join(', ');
+    return `${prefix}${rewritten}${suffix}`;
+  });
+}
+
+function requestHeaders(request) {
+  const headers = {};
+  for (const name of forwardedRequestHeaders) if (request.headers[name]) headers[name] = request.headers[name];
+  headers['accept-encoding'] = 'identity';
+  return headers;
 }
 
 async function proxy(request, response) {
   let target = targetFromRequest(request.url);
   for (let redirect = 0; redirect <= 5; redirect += 1) {
     await assertPublicTarget(target);
-    const upstream = await fetch(target, { redirect: 'manual', headers: { 'user-agent': 'OrbitBrowser/1.0' } });
+    const upstream = await fetch(target, { method: request.method, redirect: 'manual', headers: requestHeaders(request), body: ['GET', 'HEAD'].includes(request.method) ? undefined : request });
     if ([301, 302, 303, 307, 308].includes(upstream.status)) {
       const location = upstream.headers.get('location');
       if (!location || redirect === 5) throw new Error('Too many redirects.');
       target = new URL(location, target);
       continue;
     }
-    const body = await readResponse(upstream);
     const headers = {};
-    for (const [name, value] of upstream.headers) if (!blockedHeaders.has(name.toLowerCase())) headers[name] = value;
-    headers['access-control-allow-origin'] = 'http://127.0.0.1:' + port;
+    for (const [name, value] of upstream.headers) {
+      const lower = name.toLowerCase();
+      if (!blockedHeaders.has(lower) && !hopByHopHeaders.has(lower) && lower !== 'content-length') headers[name] = value;
+    }
+    if (headers.location) headers.location = proxyUrl(new URL(headers.location, target));
+    headers['access-control-allow-origin'] = `http://127.0.0.1:${port}`;
+    const contentType = upstream.headers.get('content-type') || '';
+    if (contentType.includes('text/html') && request.method !== 'HEAD') {
+      const body = Buffer.from(await upstream.text());
+      const rewritten = rewriteHtml(body, target);
+      headers['content-type'] = 'text/html; charset=utf-8';
+      headers['content-length'] = Buffer.byteLength(rewritten);
+      response.writeHead(upstream.status, headers);
+      response.end(rewritten);
+      return;
+    }
     response.writeHead(upstream.status, headers);
-    response.end(body);
+    if (request.method === 'HEAD' || !upstream.body) { response.end(); return; }
+    require('node:stream').Readable.fromWeb(upstream.body).pipe(response);
     return;
   }
 }
@@ -74,7 +102,8 @@ function serveStatic(request, response) {
     response.end('Not found');
     return;
   }
-  response.writeHead(200);
+  const contentTypes = { '.css': 'text/css', '.html': 'text/html', '.js': 'text/javascript', '.json': 'application/json' };
+  response.writeHead(200, { 'content-type': contentTypes[path.extname(file).toLowerCase()] || 'application/octet-stream' });
   fs.createReadStream(file).pipe(response);
 }
 
