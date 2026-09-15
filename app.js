@@ -10,6 +10,7 @@
   const reload = document.querySelector('#reload');
   const external = document.querySelector('#open-external');
   const preview = document.querySelector('#preview');
+  const proxyPreview = document.querySelector('#proxy-preview');
   const blockedMessage = document.querySelector('#blocked-message');
   const openBlocked = document.querySelector('#open-blocked');
   let loadTimer;
@@ -49,6 +50,11 @@
     if (url) window.open(url, 'orbit-site', 'noopener,noreferrer');
   }
 
+  function showProxyPreview(url) {
+    if (!url) return;
+    show(`/proxy?url=${encodeURIComponent(url)}`);
+  }
+
   // Native navigation is the only browser-supported way to use sites that block iframes.
   form.addEventListener('submit', event => {
     const url = normalise(address.value);
@@ -57,6 +63,7 @@
     address.value = url;
   });
   preview.addEventListener('click', () => show(normalise(address.value)));
+  proxyPreview.addEventListener('click', () => showProxyPreview(normalise(address.value)));
   frame.addEventListener('load', () => {
     window.clearTimeout(loadTimer);
     status.classList.remove('show');

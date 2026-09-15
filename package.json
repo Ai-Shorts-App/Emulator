@@ -1,0 +1,12 @@
+{
+  "name": "orbit-browser",
+  "private": true,
+  "version": "1.0.0",
+  "description": "A static web viewer with an optional localhost preview proxy",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}
