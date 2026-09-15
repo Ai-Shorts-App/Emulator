@@ -1,0 +1,32 @@
+:root { color-scheme: dark; font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; background: #090b11; color: #edf0f8; }
+* { box-sizing: border-box; }
+body { margin: 0; min-width: 320px; overflow: hidden; }
+.browser-shell { height: 100vh; display: flex; flex-direction: column; background: #10131d; }
+.toolbar { min-height: 68px; display: flex; align-items: center; gap: 10px; padding: 12px 16px; border-bottom: 1px solid #2a3040; background: #151925; }
+.brand { color: #f0c76d; text-decoration: none; font-size: 20px; font-weight: 750; letter-spacing: -.5px; white-space: nowrap; margin-right: 12px; }
+.brand span { font-size: 26px; vertical-align: -2px; }
+.controls { display: flex; gap: 5px; }
+button { border: 0; border-radius: 9px; background: #262c3a; color: #e9edf6; cursor: pointer; font: inherit; transition: background .15s, transform .15s; }
+button:hover:not(:disabled) { background: #353d50; }
+button:active:not(:disabled) { transform: scale(.95); }
+button:disabled { color: #6f7788; cursor: not-allowed; }
+.controls button, .external { width: 36px; height: 36px; font-size: 20px; }
+.address-form { flex: 1; min-width: 100px; display: flex; align-items: center; gap: 8px; height: 42px; padding: 4px 5px 4px 13px; border: 1px solid #343c4f; border-radius: 12px; background: #0e1119; }
+.address-form:focus-within { border-color: #e7b64e; box-shadow: 0 0 0 3px #e7b64e22; }
+.lock { color: #8f9aac; }
+input { min-width: 0; flex: 1; border: 0; outline: 0; color: #f3f5fa; background: transparent; font: inherit; font-size: 15px; }
+.address-form button { padding: 7px 14px; background: #e7b64e; color: #1b1608; font-weight: 700; }
+.address-form button:hover { background: #f7cf72; }
+.viewer { position: relative; flex: 1; min-height: 0; background: #fff; }
+iframe { width: 100%; height: 100%; border: 0; display: block; background: #fff; }
+.load-status { position: absolute; z-index: 1; top: 11px; left: 50%; transform: translateX(-50%); padding: 6px 12px; border-radius: 99px; background: #151925e8; color: #cbd2e2; font-size: 13px; pointer-events: none; opacity: 0; transition: opacity .2s; }
+.load-status.show { opacity: 1; }
+.welcome { flex: 1; display: grid; place-items: center; padding: 24px; background: radial-gradient(circle at 50% 0%, #28314a 0, #10131d 46%, #090b11 100%); }
+.welcome-card { max-width: 590px; text-align: center; }
+.eyebrow { color: #e7b64e; font-size: 12px; font-weight: 750; letter-spacing: .16em; text-transform: uppercase; }
+h1 { margin: 8px 0; font-size: clamp(42px, 8vw, 76px); letter-spacing: -3px; }
+.welcome-card > p:not(.eyebrow) { color: #aeb8ca; line-height: 1.6; }
+.quick-links { display: flex; justify-content: center; gap: 10px; flex-wrap: wrap; margin: 28px 0; }
+.quick-links button { padding: 10px 15px; }
+.note { font-size: 13px; }
+@media (max-width: 620px) { .toolbar { gap: 6px; padding: 10px; } .brand { display: none; } .controls button { width: 31px; } .external { width: 32px; } .address-form { height: 39px; } .address-form button { padding: 6px 10px; } }

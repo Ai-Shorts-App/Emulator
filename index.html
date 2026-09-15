@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#10131d" />
+    <title>Orbit Browser</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <main class="browser-shell">
+      <header class="toolbar">
+        <a class="brand" href="./" aria-label="Orbit Browser home"><span>◌</span> Orbit</a>
+        <nav class="controls" aria-label="Browser controls">
+          <button id="back" title="Back (Alt + Left)" aria-label="Go back">←</button>
+          <button id="forward" title="Forward (Alt + Right)" aria-label="Go forward">→</button>
+          <button id="reload" title="Reload" aria-label="Reload page">↻</button>
+        </nav>
+        <form id="address-form" class="address-form">
+          <span class="lock" aria-hidden="true">⌁</span>
+          <input id="address" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="Search or enter a web address" aria-label="Web address" />
+          <button type="submit">Go</button>
+        </form>
+        <button id="open-external" class="external" title="Open in a new tab" aria-label="Open current page in new tab">↗</button>
+      </header>
+
+      <section id="welcome" class="welcome" aria-live="polite">
+        <div class="welcome-card">
+          <p class="eyebrow">A lightweight web viewer</p>
+          <h1>Where to?</h1>
+          <p>Enter a URL above, or try one of these embed-friendly sites.</p>
+          <div class="quick-links">
+            <button data-url="https://example.com">Example</button>
+            <button data-url="https://www.wikipedia.org">Wikipedia</button>
+            <button data-url="https://developer.mozilla.org">MDN</button>
+          </div>
+          <p class="note">Some websites prevent being shown inside another page. When that happens, use ↗ to open the site directly in a new tab.</p>
+        </div>
+      </section>
+
+      <section id="viewer" class="viewer" hidden>
+        <div id="load-status" class="load-status" role="status">Loading…</div>
+        <iframe id="page" title="Web page viewer" referrerpolicy="strict-origin-when-cross-origin"></iframe>
+      </section>
+    </main>
+    <script src="app.js"></script>
+  </body>
+</html>
